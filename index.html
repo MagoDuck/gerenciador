@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controle Financeiro</title>
+  <meta name="description" content="Controle suas receitas e despesas de forma simples, offline e instalável.">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6366f1">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Finanças Pro">
+
+  <link rel="stylesheet" href="css/styles.css?v=17">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Sprite de ícones SVG -->
+  <svg style="position:absolute; width:0; height:0; overflow:hidden;" aria-hidden="true">
+    <defs>
+      <symbol id="icon-logo" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M12 6.5v11M9 9.2c0-1.3 1.2-2.2 3-2.2s3 .9 3 2.1-1.3 1.8-3 2.1c-1.7.3-3 .9-3 2.1s1.2 2.2 3 2.2 3-.9 3-2.1"></path>
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </symbol>
+      <symbol id="icon-list" viewBox="0 0 24 24">
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+      </symbol>
+      <symbol id="icon-credit-card" viewBox="0 0 24 24">
+        <rect x="1" y="4" width="22" height="16" rx="2"></rect>
+        <line x1="1" y1="10" x2="23" y2="10"></line>
+      </symbol>
+      <symbol id="icon-pie-chart" viewBox="0 0 24 24">
+        <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+        <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+      </symbol>
+      <symbol id="icon-bar-chart" viewBox="0 0 24 24">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </symbol>
+      <symbol id="icon-trending-up" viewBox="0 0 24 24">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+        <polyline points="17 6 23 6 23 12"></polyline>
+      </symbol>
+      <symbol id="icon-trending-down" viewBox="0 0 24 24">
+        <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+        <polyline points="17 18 23 18 23 12"></polyline>
+      </symbol>
+      <symbol id="icon-activity" viewBox="0 0 24 24">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+      </symbol>
+      <symbol id="icon-wallet" viewBox="0 0 24 24">
+        <path d="M3 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"></path>
+        <path d="M16 13h.01"></path>
+      </symbol>
+      <symbol id="icon-settings" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </symbol>
+      <symbol id="icon-edit" viewBox="0 0 24 24">
+        <path d="M11 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"></path>
+        <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+      </symbol>
+      <symbol id="icon-save" viewBox="0 0 24 24">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+        <polyline points="7 3 7 8 15 8"></polyline>
+      </symbol>
+      <symbol id="icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </symbol>
+      <symbol id="icon-palette" viewBox="0 0 24 24">
+        <path d="M12 21a9 9 0 1 1 0-18c4.97 0 9 3.58 9 8 0 2.21-1.79 3-4 3h-2.05a1.5 1.5 0 0 0-1 2.6c.35.33.55.79.55 1.28C14.5 19.6 13.4 21 12 21z"></path>
+        <circle cx="7.5" cy="10.5" r="1" fill="currentColor" stroke="none"></circle>
+        <circle cx="11" cy="7" r="1" fill="currentColor" stroke="none"></circle>
+        <circle cx="15.5" cy="8" r="1" fill="currentColor" stroke="none"></circle>
+      </symbol>
+      <symbol id="icon-database" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+      </symbol>
+      <symbol id="icon-smartphone" viewBox="0 0 24 24">
+        <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+        <line x1="12" y1="18" x2="12.01" y2="18"></line>
+      </symbol>
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </symbol>
+      <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </symbol>
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        <line x1="10" y1="11" x2="10" y2="17"></line>
+        <line x1="14" y1="11" x2="14" y2="17"></line>
+      </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </symbol>
+      <symbol id="icon-check-circle" viewBox="0 0 24 24">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </symbol>
+      <symbol id="icon-rotate-ccw" viewBox="0 0 24 24">
+        <polyline points="1 4 1 10 7 10"></polyline>
+        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+      </symbol>
+      <symbol id="icon-inbox" viewBox="0 0 24 24">
+        <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+        <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+      </symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </symbol>
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </symbol>
+      <symbol id="icon-repeat" viewBox="0 0 24 24">
+        <polyline points="17 1 21 5 17 9"></polyline>
+        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+        <polyline points="7 23 3 19 7 15"></polyline>
+        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+      </symbol>
+      <symbol id="icon-menu" viewBox="0 0 24 24">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="container">
+    <header>
+      <button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <svg class="icon"><use href="#icon-menu"></use></svg>
+      </button>
+      <h1>
+        <svg class="icon icon-lg"><use href="#icon-logo"></use></svg>
+        Finanças
+        <span>v3.0</span>
+      </h1>
+    </header>
+
+    <!-- Cards de Resumo -->
+    <div class="summary">
+      <div class="card">
+        <h3><svg class="icon"><use href="#icon-wallet"></use></svg> Receitas</h3>
+        <p class="income-val" id="totalIncome">R$ 0,00</p>
+      </div>
+      <div class="card">
+        <h3><svg class="icon"><use href="#icon-trending-down"></use></svg> Despesas</h3>
+        <p class="expense-val" id="totalExpense">R$ 0,00</p>
+      </div>
+      <div class="card">
+        <h3><svg class="icon"><use href="#icon-activity"></use></svg> Saldo</h3>
+        <p class="balance-val" id="totalBalance">R$ 0,00</p>
+      </div>
+      <div class="card">
+        <h3><svg class="icon"><use href="#icon-credit-card"></use></svg> Dívidas/Assinaturas</h3>
+        <p class="divida-val" id="totalDivida">R$ 0,00</p>
+      </div>
+    </div>
+
+    <div class="app-layout">
+      <div id="sidebarOverlay" class="sidebar-overlay"></div>
+      <!-- Aba lateral -->
+      <aside class="sidebar">
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-section="lancamento">
+            <svg class="icon"><use href="#icon-plus"></use></svg> Novo Lançamento
+          </button>
+          <button class="nav-item" data-section="historico">
+            <svg class="icon"><use href="#icon-list"></use></svg> Histórico
+          </button>
+          <button class="nav-item" data-section="dividas">
+            <svg class="icon"><use href="#icon-credit-card"></use></svg> Dívidas
+          </button>
+          <button class="nav-item" data-section="assinaturas">
+            <svg class="icon"><use href="#icon-repeat"></use></svg> Assinaturas
+          </button>
+          <button class="nav-item" data-section="distribuicao">
+            <svg class="icon"><use href="#icon-pie-chart"></use></svg> Distribuição
+          </button>
+          <button class="nav-item" data-section="config">
+            <svg class="icon"><use href="#icon-settings"></use></svg> Configurações
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Conteúdo principal -->
+      <main class="main-content">
+
+        <!-- Novo Lançamento -->
+        <section id="section-lancamento" class="content-section active">
+          <div class="box">
+            <h2 id="formTitle"><svg class="icon"><use href="#icon-plus"></use></svg> Novo Lançamento</h2>
+            <form id="transactionForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="date">Data</label>
+                  <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                  <label for="type">Tipo</label>
+                  <select id="type" required>
+                    <option value="despesa">Despesa</option>
+                    <option value="receita">Receita</option>
+                    <option value="divida">Dívida</option>
+                    <option value="assinatura">Assinatura</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row" id="dividaFields" hidden>
+                <div class="form-group">
+                  <label for="dueDate" id="dueDateLabel">Vencimento</label>
+                  <input type="date" id="dueDate">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="description" id="descriptionLabel">Descrição</label>
+                <input type="text" id="description" placeholder="Ex: Supermercado, Salário..." required>
+              </div>
+              <div class="form-group">
+                <label for="amount">Valor (R$)</label>
+                <input type="number" id="amount" step="0.01" min="0.01" placeholder="0,00" required>
+              </div>
+              <div class="form-actions">
+                <button type="submit" id="submitBtn"><svg class="icon"><use href="#icon-plus"></use></svg> Adicionar Registro</button>
+                <button type="button" id="cancelEditBtn" class="btn-secondary" hidden><svg class="icon"><use href="#icon-x"></use></svg> Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Histórico -->
+        <section id="section-historico" class="content-section">
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-list"></use></svg> Histórico de Transações</h2>
+
+            <div class="filter-bar">
+              <div class="input-icon">
+                <svg class="icon"><use href="#icon-search"></use></svg>
+                <input type="text" id="searchInput" placeholder="Buscar por descrição ou valor...">
+              </div>
+              <input type="date" id="searchDate">
+              <select id="typeFilter">
+                <option value="">Todos os tipos</option>
+                <option value="receita">Receita</option>
+                <option value="despesa">Despesa</option>
+                <option value="divida">Dívida</option>
+                <option value="assinatura">Assinatura</option>
+              </select>
+              <button type="button" class="btn-clear" id="clearFiltersBtn">Limpar Filtros</button>
+            </div>
+
+            <p class="filtered-summary" id="filteredSummary"></p>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-sort="date">Data</th>
+                    <th data-sort="description">Descrição</th>
+                    <th data-sort="type">Tipo</th>
+                    <th data-sort="amount">Valor</th>
+                    <th class="actions-th actions-th-sm">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                  <!-- As linhas serão inseridas dinamicamente via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dívidas -->
+        <section id="section-dividas" class="content-section">
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-credit-card"></use></svg> Dívidas</h2>
+            <p class="filtered-summary" id="dividasSummary"></p>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Vencimento</th>
+                    <th>Quem / O quê</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th class="actions-th actions-th-lg">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="dividasTableBody">
+                  <!-- As linhas serão inseridas dinamicamente via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Assinaturas -->
+        <section id="section-assinaturas" class="content-section">
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-repeat"></use></svg> Assinaturas</h2>
+            <p class="filtered-summary" id="assinaturasSummary"></p>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Próxima cobrança</th>
+                    <th>Serviço</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th class="actions-th actions-th-lg">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="assinaturasTableBody">
+                  <!-- As linhas serão inseridas dinamicamente via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Distribuição -->
+        <section id="section-distribuicao" class="content-section">
+          <div class="grid-layout">
+            <div class="box">
+              <h2><svg class="icon"><use href="#icon-pie-chart"></use></svg> Receitas x Despesas</h2>
+              <div class="chart-container">
+                <canvas id="financeChart"></canvas>
+              </div>
+            </div>
+            <div class="box">
+              <h2><svg class="icon"><use href="#icon-bar-chart"></use></svg> Receitas x Despesas por Mês</h2>
+              <div class="chart-container">
+                <canvas id="monthlyChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-trending-up"></use></svg> Evolução do Saldo</h2>
+            <div class="chart-container chart-container-wide">
+              <canvas id="balanceChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Configurações -->
+        <section id="section-config" class="content-section">
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-palette"></use></svg> Aparência</h2>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Tema do aplicativo</p>
+                <p class="settings-desc">Alterne entre modo claro e escuro.</p>
+              </div>
+              <button id="themeToggle" title="Alternar tema"><svg class="icon"><use href="#icon-moon"></use></svg> Escuro</button>
+            </div>
+          </div>
+
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-database"></use></svg> Dados</h2>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Exportar backup (JSON)</p>
+                <p class="settings-desc">Salva todas as transações em um arquivo .json.</p>
+              </div>
+              <button id="exportJSONBtn"><svg class="icon"><use href="#icon-download"></use></svg> JSON</button>
+            </div>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Exportar planilha (CSV)</p>
+                <p class="settings-desc">Gera uma tabela compatível com Excel/Sheets.</p>
+              </div>
+              <button id="exportCSVBtn"><svg class="icon"><use href="#icon-download"></use></svg> CSV</button>
+            </div>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Importar backup</p>
+                <p class="settings-desc">Adiciona transações a partir de um arquivo .json.</p>
+              </div>
+              <button id="importBtn"><svg class="icon"><use href="#icon-upload"></use></svg> Importar</button>
+              <input type="file" id="importFile" accept="application/json" hidden>
+            </div>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Limpar todos os dados</p>
+                <p class="settings-desc">Remove permanentemente todas as transações salvas.</p>
+              </div>
+              <button id="clearAllBtn" class="btn-danger"><svg class="icon"><use href="#icon-trash"></use></svg> Limpar Dados</button>
+            </div>
+          </div>
+
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-smartphone"></use></svg> Aplicativo</h2>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Instalar como aplicativo</p>
+                <p class="settings-desc">Use o Finanças Pro offline, direto da tela inicial.</p>
+              </div>
+              <button id="installBtn" hidden title="Instalar aplicativo"><svg class="icon"><use href="#icon-download"></use></svg> Instalar App</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/storage.js?v=17"></script>
+  <script src="js/theme.js?v=17"></script>
+  <script src="js/toast.js?v=17"></script>
+  <script src="js/confirm.js?v=17"></script>
+  <script src="js/chart.js?v=17"></script>
+  <script src="js/app.js?v=17"></script>
+</body>
+</html>
