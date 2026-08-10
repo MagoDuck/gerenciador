@@ -1,14 +1,15 @@
-const CACHE_NAME = 'financas-pro-v9';
+const CACHE_NAME = 'financas-pro-v22';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  './css/styles.css?v=9',
-  './js/storage.js?v=9',
-  './js/theme.js?v=9',
-  './js/toast.js?v=9',
-  './js/chart.js?v=9',
-  './js/app.js?v=9',
+  './css/styles.css?v=22',
+  './js/storage.js?v=22',
+  './js/theme.js?v=22',
+  './js/toast.js?v=22',
+  './js/confirm.js?v=22',
+  './js/chart.js?v=22',
+  './js/app.js?v=22',
   './icons/icon.svg',
   './icons/icon-maskable.svg',
   'https://cdn.jsdelivr.net/npm/chart.js',
@@ -36,23 +37,20 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  // Rede primeiro: sempre busca a versão mais recente quando online,
+  // e só usa o cache como reserva para uso offline.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then((response) => {
-          if (response && response.ok) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          if (event.request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
-        });
-    })
+    fetch(event.request)
+      .then((response) => {
+        if (response && response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        if (event.request.mode === 'navigate') return caches.match('./index.html');
+      }))
   );
 });

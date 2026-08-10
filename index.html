@@ -14,7 +14,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Finanças Pro">
 
-  <link rel="stylesheet" href="css/styles.css?v=19">
+  <link rel="stylesheet" href="css/styles.css?v=23">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -156,9 +156,42 @@
         <line x1="3" y1="12" x2="21" y2="12"></line>
         <line x1="3" y1="18" x2="21" y2="18"></line>
       </symbol>
+      <symbol id="icon-target" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"></circle>
+        <circle cx="12" cy="12" r="5.5"></circle>
+        <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"></circle>
+      </symbol>
     </defs>
   </svg>
 
+  <!-- Tela de login / cadastro -->
+  <div id="authOverlay" class="auth-overlay">
+    <div class="auth-box">
+      <div class="auth-logo">
+        <svg class="icon icon-lg"><use href="#icon-logo"></use></svg>
+        Finanças
+      </div>
+      <h2 id="authTitle">Entrar</h2>
+      <form id="authForm">
+        <div class="form-group">
+          <label for="authEmail">E-mail</label>
+          <input type="email" id="authEmail" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="authPassword">Senha</label>
+          <input type="password" id="authPassword" required minlength="6" autocomplete="current-password">
+        </div>
+        <p id="authError" class="auth-error" hidden></p>
+        <button type="submit" id="authSubmitBtn">Entrar</button>
+      </form>
+      <p class="auth-toggle">
+        <span id="authToggleText">Não tem conta?</span>
+        <button type="button" id="authToggleBtn">Criar conta</button>
+      </p>
+    </div>
+  </div>
+
+  <div id="appRoot" hidden>
   <div class="container">
     <header>
       <button id="menuToggle" class="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
@@ -208,6 +241,12 @@
           <button class="nav-item" data-section="assinaturas">
             <svg class="icon"><use href="#icon-repeat"></use></svg> Assinaturas
           </button>
+          <button class="nav-item" data-section="contas">
+            <svg class="icon"><use href="#icon-wallet"></use></svg> Contas
+          </button>
+          <button class="nav-item" data-section="metas">
+            <svg class="icon"><use href="#icon-target"></use></svg> Metas
+          </button>
           <button class="nav-item" data-section="distribuicao">
             <svg class="icon"><use href="#icon-pie-chart"></use></svg> Distribuição
           </button>
@@ -240,10 +279,18 @@
                   </select>
                 </div>
               </div>
+              <div class="form-group">
+                <label for="accountSelect">Conta</label>
+                <select id="accountSelect"></select>
+              </div>
               <div class="form-row" id="dividaFields" hidden>
                 <div class="form-group">
                   <label for="dueDate" id="dueDateLabel">Vencimento</label>
                   <input type="date" id="dueDate">
+                </div>
+                <div class="form-group" id="installmentsField" hidden>
+                  <label for="installments">Parcelas</label>
+                  <input type="number" id="installments" min="1" max="60" value="1">
                 </div>
               </div>
               <div class="form-group">
@@ -251,7 +298,7 @@
                 <input type="text" id="description" placeholder="Ex: Supermercado, Salário..." required>
               </div>
               <div class="form-group">
-                <label for="amount">Valor (R$)</label>
+                <label for="amount" id="amountLabel">Valor (R$)</label>
                 <input type="number" id="amount" step="0.01" min="0.01" placeholder="0,00" required>
               </div>
               <div class="form-actions">
@@ -352,6 +399,69 @@
           </div>
         </section>
 
+        <!-- Contas -->
+        <section id="section-contas" class="content-section">
+          <div class="box">
+            <h2 id="accountFormTitle"><svg class="icon"><use href="#icon-plus"></use></svg> Nova Conta</h2>
+            <form id="accountForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="accountName">Nome</label>
+                  <input type="text" id="accountName" placeholder="Ex: Nubank, Carteira, Vale Refeição..." required>
+                </div>
+                <div class="form-group">
+                  <label for="accountType">Tipo</label>
+                  <select id="accountType">
+                    <option value="banco">Banco</option>
+                    <option value="carteira">Carteira física</option>
+                    <option value="vale">Vale</option>
+                    <option value="investimento">Investimento</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" id="accountSubmitBtn"><svg class="icon"><use href="#icon-plus"></use></svg> Adicionar Conta</button>
+                <button type="button" id="cancelAccountEditBtn" class="btn-secondary" hidden><svg class="icon"><use href="#icon-x"></use></svg> Cancelar</button>
+              </div>
+            </form>
+          </div>
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-wallet"></use></svg> Minhas Contas</h2>
+            <div class="cards-grid" id="accountsGrid"></div>
+          </div>
+        </section>
+
+        <!-- Metas -->
+        <section id="section-metas" class="content-section">
+          <div class="box">
+            <h2 id="goalFormTitle"><svg class="icon"><use href="#icon-plus"></use></svg> Nova Meta</h2>
+            <form id="goalForm">
+              <div class="form-group">
+                <label for="goalName">Nome da meta</label>
+                <input type="text" id="goalName" placeholder="Ex: Reserva de Emergência, Viagem..." required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="goalTarget">Valor alvo (R$)</label>
+                  <input type="number" id="goalTarget" step="0.01" min="0.01" placeholder="0,00" required>
+                </div>
+                <div class="form-group">
+                  <label for="goalDeadline">Prazo (opcional)</label>
+                  <input type="date" id="goalDeadline">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="submit" id="goalSubmitBtn"><svg class="icon"><use href="#icon-plus"></use></svg> Criar Meta</button>
+                <button type="button" id="cancelGoalEditBtn" class="btn-secondary" hidden><svg class="icon"><use href="#icon-x"></use></svg> Cancelar</button>
+              </div>
+            </form>
+          </div>
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-target"></use></svg> Minhas Metas</h2>
+            <div class="cards-grid" id="goalsGrid"></div>
+          </div>
+        </section>
+
         <!-- Distribuição -->
         <section id="section-distribuicao" class="content-section">
           <div class="grid-layout">
@@ -378,6 +488,17 @@
 
         <!-- Configurações -->
         <section id="section-config" class="content-section">
+          <div class="box">
+            <h2><svg class="icon"><use href="#icon-wallet"></use></svg> Conta</h2>
+            <div class="settings-row">
+              <div>
+                <p class="settings-label">Sessão</p>
+                <p class="settings-desc" id="userEmailLabel">—</p>
+              </div>
+              <button id="logoutBtn" class="btn-secondary"><svg class="icon"><use href="#icon-x"></use></svg> Sair</button>
+            </div>
+          </div>
+
           <div class="box">
             <h2><svg class="icon"><use href="#icon-palette"></use></svg> Aparência</h2>
             <div class="settings-row">
@@ -437,12 +558,14 @@
       </main>
     </div>
   </div>
+  </div>
 
-  <script src="js/storage.js?v=19"></script>
-  <script src="js/theme.js?v=19"></script>
-  <script src="js/toast.js?v=19"></script>
-  <script src="js/confirm.js?v=19"></script>
-  <script src="js/chart.js?v=19"></script>
-  <script src="js/app.js?v=19"></script>
+  <script src="js/storage.js?v=23"></script>
+  <script src="js/theme.js?v=23"></script>
+  <script src="js/api.js?v=23"></script>
+  <script src="js/toast.js?v=23"></script>
+  <script src="js/confirm.js?v=23"></script>
+  <script src="js/chart.js?v=23"></script>
+  <script src="js/app.js?v=23"></script>
 </body>
 </html>
